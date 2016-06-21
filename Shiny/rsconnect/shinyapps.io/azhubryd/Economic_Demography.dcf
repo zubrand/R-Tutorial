@@ -1,0 +1,10 @@
+name: Economic_Demography
+account: azhubryd
+server: shinyapps.io
+appId: 109782
+bundleId: 485228
+url: https://azhubryd.shinyapps.io/Economic_Demography/
+when: 1466504453.43571
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: myfile
