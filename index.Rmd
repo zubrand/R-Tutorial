@@ -473,7 +473,9 @@ head(Ratios)
 ```
 
 ```{r gvis2, results='asis'}
-gvisMotionChart(Ratios, idvar = "Geo", timevar = "Year") %>% print('chart')
+M <- gvisMotionChart(Ratios, idvar = "Geo", timevar = "Year", options = list(width = 550, height = 450), chartid = "chartid")
+#print(M, 'chart')
+plot(M)
 ```
 
 2. rCharts
@@ -490,12 +492,14 @@ First need of specific packages for demography comes with plotting the pyramid c
 
 ```{r pyramid}
 # Special package
+library(pyramid)
 dt_pyramid %>% filter(Geo == "CZ" & Year == 2000) %>% select(M, F, Age) %>%
   pyramid(Csize = 1, Cstep = 5, AxisFM = 'd', Cgap = .1, Laxis = 0:4*25000,
           main = "Pyramid of Czech population in 2000")
 
 
 # Usual ggplot
+library(scales) # library for numeric formatting
 tmp_pyr <- dt_pyramid %>% filter(Geo %in% c("CZ","BE") & Year %in% c(2000, 2010)) %>%
   select(-X, -Gen_bio, -Gen_eco) %>% melt(id = c("Age", "Geo", "Year")) %>%
   mutate(Sex = variable, Population = value)
@@ -520,7 +524,7 @@ ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) +
   facet_grid(Geo ~ Year) + theme_bw()
 ```
 
-As you can see, special package `pyramid` makes it easy and comfortable to build 1 pyramid. On the other hand, more 
+As you can see, special package `pyramid` makes it easy and comfortable to build 1 pyramid. On the other hand, `ggplot2` solution is more complex, but at the same time more powerful, providing possibility to easily compare numerous years and/or countries.
 
 ## Indeces
 ## Life tables
@@ -556,7 +560,9 @@ Presentations are developed in HTML format and, similarly to reports, can have i
 
 Regarding the main advantages, they are the same as for the report. As in the case of usual (PowerPoint) presentation, you can add effects and animations to the slides.
 
-Example of R presentation is provided [here](google.com).
+```{r echo=F}
+#Example of R presentation is provided [here](google.com).
+```
 
 ## ShinyApp
 
