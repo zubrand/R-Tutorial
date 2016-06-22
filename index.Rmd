@@ -176,8 +176,8 @@ l[[1]] # first element of list
 As usual, first step of data processing in R is importing the data. Data can be in various forms and locations, but the most basic one is a text file (usually `*.csv`) on the local hard drive:
 
 ```{r import}
-dt_total <- read.csv("D:/OneDrive/VSE/II/Economic Demography I/R Tutorial/Data/dt_total.csv")
-dt_pyramid <- read.csv("D:/OneDrive/VSE/II/Economic Demography I/R Tutorial/Data/dt_pyramid.csv", header = T, sep = ",", quote = '"', stringsAsFactors = T)
+dt_total <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_total.csv")
+dt_pyramid <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_pyramid.csv", header = T, sep = ",", quote = '"', stringsAsFactors = T)
 
 class(dt_total)
 str(dt_total)
@@ -474,8 +474,7 @@ head(Ratios)
 
 ```{r gvis2, results='asis'}
 M <- gvisMotionChart(Ratios, idvar = "Geo", timevar = "Year", options = list(width = 550, height = 450), chartid = "chartid")
-#print(M, 'chart')
-plot(M)
+print(M, 'chart')
 ```
 
 2. rCharts
