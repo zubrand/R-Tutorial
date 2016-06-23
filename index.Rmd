@@ -506,7 +506,7 @@ tmp <- dt_pyramid %>% filter(Geo == "CZ") %>%
 
 
 r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year >= 1990), type = 'stackedAreaChart', id = 'nPlot1')
-r$set(title = "Development of economical generation in Czech Republic")
+#r$set(title = "Development of economical generation in Czech Republic")
 #r$setTemplate(afterScript='<style> svg text {font-size: 9px;}</style>')
 #r$yAxis(staggerLabels = FALSE)
 r

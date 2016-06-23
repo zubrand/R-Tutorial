@@ -2117,7 +2117,7 @@ tmp <- dt_pyramid %>% filter(Geo == "CZ") %>%
 
 
 r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year >= 1990), type = 'stackedAreaChart', id = 'nPlot1')
-r$set(title = "Development of economical generation in Czech Republic")
+#r$set(title = "Development of economical generation in Czech Republic")
 #r$setTemplate(afterScript='<style> svg text {font-size: 9px;}</style>')
 #r$yAxis(staggerLabels = FALSE)
 r
@@ -2147,22 +2147,21 @@ r
   &lt;/head&gt;
   &lt;body &gt;
     
-    &lt;div id = &#039;chart1eb47bc6fe0&#039; class = &#039;rChart nvd3&#039;&gt;&lt;/div&gt;    
+    &lt;div id = &#039;chart33402c52223&#039; class = &#039;rChart nvd3&#039;&gt;&lt;/div&gt;    
     &lt;script type=&#039;text/javascript&#039;&gt;
  $(document).ready(function(){
-      drawchart1eb47bc6fe0()
+      drawchart33402c52223()
     });
-    function drawchart1eb47bc6fe0(){  
+    function drawchart33402c52223(){  
       var opts = {
- &quot;dom&quot;: &quot;chart1eb47bc6fe0&quot;,
+ &quot;dom&quot;: &quot;chart33402c52223&quot;,
 &quot;width&quot;:    600,
 &quot;height&quot;:    400,
 &quot;x&quot;: &quot;Year&quot;,
 &quot;y&quot;: &quot;Population&quot;,
 &quot;group&quot;: &quot;Generation&quot;,
 &quot;type&quot;: &quot;stackedAreaChart&quot;,
-&quot;id&quot;: &quot;chart1eb47bc6fe0&quot;,
-&quot;title&quot;: &quot;Development of economical generation in Czech Republic&quot; 
+&quot;id&quot;: &quot;chart33402c52223&quot; 
 },
         data = [
  {
@@ -2763,7 +2762,7 @@ r
     
     &lt;script&gt;&lt;/script&gt;    
   &lt;/body&gt;
-&lt;/html&gt; ' scrolling='no' frameBorder='0' seamless class='rChart  nvd3  ' id='iframe-chart1eb47bc6fe0'> </iframe>
+&lt;/html&gt; ' scrolling='no' frameBorder='0' seamless class='rChart  nvd3  ' id='iframe-chart33402c52223'> </iframe>
  <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 
 # Demography in R
