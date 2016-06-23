@@ -487,23 +487,36 @@ print(M, 'chart')
 
 2. rCharts
 
-```{r rcharts, results='asis', comment = NA, tidy = F, cache = F}
+```{r rcharts, results='asis', comment = NA, cache = F}
 library(rCharts)
+options(
+  rcharts.mode = 'iframesrc', 
+  rcharts.cdn = TRUE,
+  RCHART_WIDTH = 600,
+  RCHART_HEIGHT = 400
+)
 
 tmp <- dt_pyramid %>% filter(Geo == "CZ") %>% 
   group_by(Gen_eco, Year) %>% summarize(Population = sum(F+M)) %>%
   mutate(Generation = Gen_eco, Date = as.numeric(as.POSIXct(paste0(Year, "-01-01"))))
 
 # r <- Rickshaw$new()
-# r$layer(Population ~ Date, group = "Generation", data = tmp, type = "area", width = 600)
+# r$layer(Population ~ Date, group = "Generation", data = tmp, type = "multiBarChart", width = 600)
 # r$set(slider = TRUE)
 
-r <- nPlot(Population ~ Date, group = "Generation", data = tmp, type = 'multiBarChart')
-#r$print('nPlot')
-r$show('nPlot1', cdn =TRUE)
 
-#r$save('index_files/rChart1.html', cdn = TRUE)
-#cat('<iframe src="index_files/rChart1.html" width=100%, height = 100%></iframe>')
+r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year > 2005), type = 'stackedAreaChart', id = 'nPlot1')
+
+#r$print('nPlot')
+#r$show('nPlot1', cdn =TRUE)
+
+#r$print('nPlot', include_assets  = T)
+
+# r$save('index_files/rChart1.html', cdn = TRUE)
+# cat('<iframe src="index_files/rChart1.html" width=800, height = 400></iframe>')
+
+r
+
 #r$show('inline', cdn = TRUE, include_assets = TRUE)
 
 #r$print('iframesrc', include_assets=TRUE)

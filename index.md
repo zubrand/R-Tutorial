@@ -2100,21 +2100,342 @@ callbacks.shift()();
 
 ```r
 library(rCharts)
+options(
+  rcharts.mode = 'iframesrc', 
+  rcharts.cdn = TRUE,
+  RCHART_WIDTH = 600,
+  RCHART_HEIGHT = 400
+)
 
 tmp <- dt_pyramid %>% filter(Geo == "CZ") %>% 
   group_by(Gen_eco, Year) %>% summarize(Population = sum(F+M)) %>%
   mutate(Generation = Gen_eco, Date = as.numeric(as.POSIXct(paste0(Year, "-01-01"))))
 
 # r <- Rickshaw$new()
-# r$layer(Population ~ Date, group = "Generation", data = tmp, type = "area", width = 600)
+# r$layer(Population ~ Date, group = "Generation", data = tmp, type = "multiBarChart", width = 600)
 # r$set(slider = TRUE)
 
-r <- nPlot(Population ~ Date, group = "Generation", data = tmp, type = 'multiBarChart')
-#r$print('nPlot')
-r$show('nPlot1', cdn =TRUE)
 
-#r$save('index_files/rChart1.html', cdn = TRUE)
-#cat('<iframe src="index_files/rChart1.html" width=100%, height = 100%></iframe>')
+r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year > 2005), type = 'stackedAreaChart', id = 'nPlot1')
+
+#r$print('nPlot')
+#r$show('nPlot1', cdn =TRUE)
+
+#r$print('nPlot', include_assets  = T)
+
+# r$save('index_files/rChart1.html', cdn = TRUE)
+# cat('<iframe src="index_files/rChart1.html" width=800, height = 400></iframe>')
+
+r
+```
+
+<iframe srcdoc=' &lt;!doctype HTML&gt;
+&lt;meta charset = &#039;utf-8&#039;&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel=&#039;stylesheet&#039; href=&#039;//cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.css&#039;&gt;
+    
+    &lt;script src=&#039;//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js&#039; type=&#039;text/javascript&#039;&gt;&lt;/script&gt;
+    &lt;script src=&#039;//d3js.org/d3.v3.min.js&#039; type=&#039;text/javascript&#039;&gt;&lt;/script&gt;
+    &lt;script src=&#039;//cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js&#039; type=&#039;text/javascript&#039;&gt;&lt;/script&gt;
+    &lt;script src=&#039;//nvd3.org/assets/lib/fisheye.js&#039; type=&#039;text/javascript&#039;&gt;&lt;/script&gt;
+    
+    &lt;style&gt;
+    .rChart {
+      display: block;
+      margin-left: auto; 
+      margin-right: auto;
+      width: 600px;
+      height: 400px;
+    }  
+    &lt;/style&gt;
+    
+  &lt;/head&gt;
+  &lt;body &gt;
+    
+    &lt;div id = &#039;chart2138303b2800&#039; class = &#039;rChart nvd3&#039;&gt;&lt;/div&gt;    
+    &lt;script type=&#039;text/javascript&#039;&gt;
+ $(document).ready(function(){
+      drawchart2138303b2800()
+    });
+    function drawchart2138303b2800(){  
+      var opts = {
+ &quot;dom&quot;: &quot;chart2138303b2800&quot;,
+&quot;width&quot;:    600,
+&quot;height&quot;:    400,
+&quot;x&quot;: &quot;Year&quot;,
+&quot;y&quot;: &quot;Population&quot;,
+&quot;group&quot;: &quot;Generation&quot;,
+&quot;type&quot;: &quot;stackedAreaChart&quot;,
+&quot;id&quot;: &quot;chart2138303b2800&quot; 
+},
+        data = [
+ {
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2006,
+&quot;Population&quot;:        2142784,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1136048400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2007,
+&quot;Population&quot;:        2118765,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1167584400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2008,
+&quot;Population&quot;:        2112788,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1199120400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2009,
+&quot;Population&quot;:        2109254,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1230742800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2010,
+&quot;Population&quot;:        2105825,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1262278800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2011,
+&quot;Population&quot;:        2100749,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1293814800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2012,
+&quot;Population&quot;:        2082346,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1325350800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2013,
+&quot;Population&quot;:        2070561,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1356973200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2014,
+&quot;Population&quot;:        2057329,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1388509200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2015,
+&quot;Population&quot;:        2064128,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1420045200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2006,
+&quot;Population&quot;:        6624884,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1136048400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2007,
+&quot;Population&quot;:        6653416,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1167584400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2008,
+&quot;Population&quot;:        6718011,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1199120400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2009,
+&quot;Population&quot;:        6760180,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1230742800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2010,
+&quot;Population&quot;:        6756743,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1262278800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2011,
+&quot;Population&quot;:        6749013,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1293814800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2012,
+&quot;Population&quot;:        6721663,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1325350800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2013,
+&quot;Population&quot;:        6677946,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1356973200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2014,
+&quot;Population&quot;:        6629546,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1388509200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2015,
+&quot;Population&quot;:        6593741,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1420045200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2006,
+&quot;Population&quot;:        1455909,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1136048400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2007,
+&quot;Population&quot;:        1482052,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1167584400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2008,
+&quot;Population&quot;:        1512623,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1199120400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2009,
+&quot;Population&quot;:        1556349,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1230742800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2010,
+&quot;Population&quot;:        1599520,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1262278800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2011,
+&quot;Population&quot;:        1636969,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1293814800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2012,
+&quot;Population&quot;:        1701436,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1325350800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2013,
+&quot;Population&quot;:        1767618,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1356973200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2014,
+&quot;Population&quot;:        1825544,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1388509200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2015,
+&quot;Population&quot;:        1880406,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1420045200 
+} 
+]
+  
+      if(!(opts.type===&quot;pieChart&quot; || opts.type===&quot;sparklinePlus&quot; || opts.type===&quot;bulletChart&quot;)) {
+        var data = d3.nest()
+          .key(function(d){
+            //return opts.group === undefined ? &#039;main&#039; : d[opts.group]
+            //instead of main would think a better default is opts.x
+            return opts.group === undefined ? opts.y : d[opts.group];
+          })
+          .entries(data);
+      }
+      
+      if (opts.disabled != undefined){
+        data.map(function(d, i){
+          d.disabled = opts.disabled[i]
+        })
+      }
+      
+      nv.addGraph(function() {
+        var chart = nv.models[opts.type]()
+          .width(opts.width)
+          .height(opts.height)
+          
+        if (opts.type != &quot;bulletChart&quot;){
+          chart
+            .x(function(d) { return d[opts.x] })
+            .y(function(d) { return d[opts.y] })
+        }
+          
+         
+        
+          
+        
+
+        
+        
+        
+      
+       d3.select(&quot;#&quot; + opts.id)
+        .append(&#039;svg&#039;)
+        .datum(data)
+        .transition().duration(500)
+        .call(chart);
+
+       nv.utils.windowResize(chart.update);
+       return chart;
+      });
+    };
+&lt;/script&gt;
+    
+    &lt;script&gt;&lt;/script&gt;    
+  &lt;/body&gt;
+&lt;/html&gt; ' scrolling='no' frameBorder='0' seamless class='rChart  nvd3  ' id='iframe-chart2138303b2800'> </iframe>
+ <style>iframe.rChart{ width: 100%; height: 400px;}</style>
+
+```r
 #r$show('inline', cdn = TRUE, include_assets = TRUE)
 
 #r$print('iframesrc', include_assets=TRUE)
