@@ -505,21 +505,11 @@ tmp <- dt_pyramid %>% filter(Geo == "CZ") %>%
 # r$set(slider = TRUE)
 
 
-r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year > 2005), type = 'stackedAreaChart', id = 'nPlot1')
-
-#r$print('nPlot')
-#r$show('nPlot1', cdn =TRUE)
-
-#r$print('nPlot', include_assets  = T)
-
-# r$save('index_files/rChart1.html', cdn = TRUE)
-# cat('<iframe src="index_files/rChart1.html" width=800, height = 400></iframe>')
-
+r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year >= 1990), type = 'stackedAreaChart', id = 'nPlot1')
+r$set(title = "Development of economical generation in Czech Republic")
+r$setTemplate(afterScript='<style> svg text {font-size: 9px;}</style>')
+r$yAxis(staggerLabels = FALSE)
 r
-
-#r$show('inline', cdn = TRUE, include_assets = TRUE)
-
-#r$print('iframesrc', include_assets=TRUE)
 
 ```
 
