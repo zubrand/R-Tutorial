@@ -2116,16 +2116,10 @@ tmp <- dt_pyramid %>% filter(Geo == "CZ") %>%
 # r$set(slider = TRUE)
 
 
-r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year > 2005), type = 'stackedAreaChart', id = 'nPlot1')
-
-#r$print('nPlot')
-#r$show('nPlot1', cdn =TRUE)
-
-#r$print('nPlot', include_assets  = T)
-
-# r$save('index_files/rChart1.html', cdn = TRUE)
-# cat('<iframe src="index_files/rChart1.html" width=800, height = 400></iframe>')
-
+r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year >= 1990), type = 'stackedAreaChart', id = 'nPlot1')
+r$set(title = "Development of economical generation in Czech Republic")
+r$setTemplate(afterScript='<style> svg text {font-size: 9px;}</style>')
+r$yAxis(staggerLabels = FALSE)
 r
 ```
 
@@ -2153,24 +2147,137 @@ r
   &lt;/head&gt;
   &lt;body &gt;
     
-    &lt;div id = &#039;chart2138303b2800&#039; class = &#039;rChart nvd3&#039;&gt;&lt;/div&gt;    
+    &lt;div id = &#039;chart1cf4bfa7671&#039; class = &#039;rChart nvd3&#039;&gt;&lt;/div&gt;    
     &lt;script type=&#039;text/javascript&#039;&gt;
  $(document).ready(function(){
-      drawchart2138303b2800()
+      drawchart1cf4bfa7671()
     });
-    function drawchart2138303b2800(){  
+    function drawchart1cf4bfa7671(){  
       var opts = {
- &quot;dom&quot;: &quot;chart2138303b2800&quot;,
+ &quot;dom&quot;: &quot;chart1cf4bfa7671&quot;,
 &quot;width&quot;:    600,
 &quot;height&quot;:    400,
 &quot;x&quot;: &quot;Year&quot;,
 &quot;y&quot;: &quot;Population&quot;,
 &quot;group&quot;: &quot;Generation&quot;,
 &quot;type&quot;: &quot;stackedAreaChart&quot;,
-&quot;id&quot;: &quot;chart2138303b2800&quot; 
+&quot;id&quot;: &quot;chart1cf4bfa7671&quot;,
+&quot;title&quot;: &quot;Development of economical generation in Czech Republic&quot; 
 },
         data = [
  {
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1990,
+&quot;Population&quot;:        3074515,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      631126800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1991,
+&quot;Population&quot;:        3037810,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      662662800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1992,
+&quot;Population&quot;:        3014045,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      694198800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1993,
+&quot;Population&quot;:        2975205,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      725821200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1994,
+&quot;Population&quot;:        2918395,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      757357200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1995,
+&quot;Population&quot;:        2836074,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      788893200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1996,
+&quot;Population&quot;:        2744924,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      820429200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1997,
+&quot;Population&quot;:        2653537,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      852051600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1998,
+&quot;Population&quot;:        2567529,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      883587600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 1999,
+&quot;Population&quot;:        2484719,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      915123600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2000,
+&quot;Population&quot;:        2406737,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      946659600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2001,
+&quot;Population&quot;:        2347523,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:      978282000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2002,
+&quot;Population&quot;:        2292596,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1009818000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2003,
+&quot;Population&quot;:        2248227,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1041354000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2004,
+&quot;Population&quot;:        2209167,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1072890000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
+&quot;Year&quot;: 2005,
+&quot;Population&quot;:        2173087,
+&quot;Generation&quot;: &quot;[0,20)&quot;,
+&quot;Date&quot;:     1104512400 
+},
+{
  &quot;Gen_eco&quot;: &quot;[0,20)&quot;,
 &quot;Year&quot;: 2006,
 &quot;Population&quot;:        2142784,
@@ -2242,6 +2349,118 @@ r
 },
 {
  &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1990,
+&quot;Population&quot;:        5995565,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      631126800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1991,
+&quot;Population&quot;:        5964739,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      662662800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1992,
+&quot;Population&quot;:        5983545,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      694198800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1993,
+&quot;Population&quot;:        6022234,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      725821200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1994,
+&quot;Population&quot;:        6072775,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      757357200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1995,
+&quot;Population&quot;:        6140855,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      788893200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1996,
+&quot;Population&quot;:        6204140,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      820429200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1997,
+&quot;Population&quot;:        6267352,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      852051600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1998,
+&quot;Population&quot;:        6329734,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      883587600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 1999,
+&quot;Population&quot;:        6393464,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      915123600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2000,
+&quot;Population&quot;:        6453283,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      946659600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2001,
+&quot;Population&quot;:        6473862,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:      978282000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2002,
+&quot;Population&quot;:        6494182,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1009818000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2003,
+&quot;Population&quot;:        6526754,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1041354000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2004,
+&quot;Population&quot;:        6563410,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1072890000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
+&quot;Year&quot;: 2005,
+&quot;Population&quot;:        6591638,
+&quot;Generation&quot;: &quot;[20,65)&quot;,
+&quot;Date&quot;:     1104512400 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[20,65)&quot;,
 &quot;Year&quot;: 2006,
 &quot;Population&quot;:        6624884,
 &quot;Generation&quot;: &quot;[20,65)&quot;,
@@ -2309,6 +2528,118 @@ r
 &quot;Population&quot;:        6593741,
 &quot;Generation&quot;: &quot;[20,65)&quot;,
 &quot;Date&quot;:     1420045200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1990,
+&quot;Population&quot;:        1292022,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      631126800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1991,
+&quot;Population&quot;:        1302058,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      662662800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1992,
+&quot;Population&quot;:        1314958,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      694198800 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1993,
+&quot;Population&quot;:        1328258,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      725821200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1994,
+&quot;Population&quot;:        1342843,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      757357200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1995,
+&quot;Population&quot;:        1356232,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      788893200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1996,
+&quot;Population&quot;:        1372280,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      820429200 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1997,
+&quot;Population&quot;:        1388248,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      852051600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1998,
+&quot;Population&quot;:        1401862,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      883587600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 1999,
+&quot;Population&quot;:        1411438,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      915123600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2000,
+&quot;Population&quot;:        1418078,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      946659600 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2001,
+&quot;Population&quot;:        1410642,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:      978282000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2002,
+&quot;Population&quot;:        1414404,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1009818000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2003,
+&quot;Population&quot;:        1417668,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1041354000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2004,
+&quot;Population&quot;:        1422770,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1072890000 
+},
+{
+ &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
+&quot;Year&quot;: 2005,
+&quot;Population&quot;:        1434130,
+&quot;Generation&quot;: &quot;[65,100]&quot;,
+&quot;Date&quot;:     1104512400 
 },
 {
  &quot;Gen_eco&quot;: &quot;[65,100]&quot;,
@@ -2416,7 +2747,8 @@ r
 
         
         
-        
+        chart.yAxis
+  .staggerLabels(false)
       
        d3.select(&quot;#&quot; + opts.id)
         .append(&#039;svg&#039;)
@@ -2430,16 +2762,10 @@ r
     };
 &lt;/script&gt;
     
-    &lt;script&gt;&lt;/script&gt;    
+    &lt;style&gt; svg text {font-size: 9px;}&lt;/style&gt;    
   &lt;/body&gt;
-&lt;/html&gt; ' scrolling='no' frameBorder='0' seamless class='rChart  nvd3  ' id='iframe-chart2138303b2800'> </iframe>
+&lt;/html&gt; ' scrolling='no' frameBorder='0' seamless class='rChart  nvd3  ' id='iframe-chart1cf4bfa7671'> </iframe>
  <style>iframe.rChart{ width: 100%; height: 400px;}</style>
-
-```r
-#r$show('inline', cdn = TRUE, include_assets = TRUE)
-
-#r$print('iframesrc', include_assets=TRUE)
-```
 
 # Demography in R
 ## Pyramid
