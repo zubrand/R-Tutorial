@@ -1616,9 +1616,9 @@ tmp &lt;- dt_pyramid %&gt;% filter(Geo == &quot;CZ&quot;) %&gt;%
 
 
 r &lt;- nPlot(Population ~ Year, group = &quot;Generation&quot;, data = tmp %&gt;% filter(Year &gt;= 1990), type = 'stackedAreaChart', id = 'nPlot1')
-#r$set(title = &quot;Development of economical generation in Czech Republic&quot;)
-#r$setTemplate(afterScript='&lt;style&gt; svg text {font-size: 9px;}&lt;/style&gt;')
-#r$yAxis(staggerLabels = FALSE)
+r$set(title = &quot;Development of economical generation in Czech Republic&quot;)
+r$setTemplate(afterScript='&lt;style&gt; svg text {font-size: 9px;}&lt;/style&gt;')
+r$yAxis(staggerLabels = FALSE)
 r</code></pre>
 <iframe srcdoc=" &lt;!doctype HTML&gt;
 &lt;meta charset = 'utf-8'&gt;
@@ -1644,21 +1644,22 @@ r</code></pre>
   &lt;/head&gt;
   &lt;body &gt;
     
-    &lt;div id = 'chart33402c52223' class = 'rChart nvd3'&gt;&lt;/div&gt;    
+    &lt;div id = 'chart2e8c11d479e5' class = 'rChart nvd3'&gt;&lt;/div&gt;    
     &lt;script type='text/javascript'&gt;
  $(document).ready(function(){
-      drawchart33402c52223()
+      drawchart2e8c11d479e5()
     });
-    function drawchart33402c52223(){  
+    function drawchart2e8c11d479e5(){  
       var opts = {
- &quot;dom&quot;: &quot;chart33402c52223&quot;,
+ &quot;dom&quot;: &quot;chart2e8c11d479e5&quot;,
 &quot;width&quot;:    600,
 &quot;height&quot;:    400,
 &quot;x&quot;: &quot;Year&quot;,
 &quot;y&quot;: &quot;Population&quot;,
 &quot;group&quot;: &quot;Generation&quot;,
 &quot;type&quot;: &quot;stackedAreaChart&quot;,
-&quot;id&quot;: &quot;chart33402c52223&quot; 
+&quot;id&quot;: &quot;chart2e8c11d479e5&quot;,
+&quot;title&quot;: &quot;Development of economical generation in Czech Republic&quot; 
 },
         data = [
  {
@@ -2243,7 +2244,8 @@ r</code></pre>
 
         
         
-        
+        chart.yAxis
+  .staggerLabels(false)
       
        d3.select(&quot;#&quot; + opts.id)
         .append('svg')
@@ -2257,9 +2259,9 @@ r</code></pre>
     };
 &lt;/script&gt;
     
-    &lt;script&gt;&lt;/script&gt;    
+    &lt;style&gt; svg text {font-size: 9px;}&lt;/style&gt;    
   &lt;/body&gt;
-&lt;/html&gt; " scrolling="no" frameBorder="0" seamless class="rChart  nvd3  " id="iframe-chart33402c52223">
+&lt;/html&gt; " scrolling="no" frameBorder="0" seamless class="rChart  nvd3  " id="iframe-chart2e8c11d479e5">
 </iframe>
 <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 </div>
