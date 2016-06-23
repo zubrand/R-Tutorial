@@ -2,7 +2,7 @@
 title: "R Tutorial"
 sibtitle: "Economic Demography I"
 author: "Andriy Zhubryd"
-date: "21 června 2016"
+date: "June 21,2016"
 output: 
   html_document:
     fig_width: 8
@@ -479,8 +479,17 @@ print(M, 'chart')
 
 2. rCharts
 
-```{r rcharts}
+```{r rcharts, results='asis'}
 library(rCharts)
+
+tmp <- dt_pyramid %>% filter(Geo == "CZ") %>% 
+  group_by(Gen_eco, Year) %>% summarize(Population = sum(F+M)) %>%
+  mutate(Generation = Gen_eco, Date = as.numeric(as.POSIXct(paste0(Year, "-01-01"))))
+
+r <- Rickshaw$new()
+r$layer(Population ~ Date, group = "Generation", data = tmp, type = "area", width = 600)
+r$set(slider = TRUE)
+r$show('iframesrc', cdn = TRUE)
 
 ```
 
