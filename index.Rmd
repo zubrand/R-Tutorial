@@ -13,7 +13,15 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: yes
+ext_widgets : {rCharts: ["libraries/highcharts","libraries/nvd3", "libraries/morris", "libraries/leaflet", "libraries/rickshaw"]}
+mode: standalone
 ---
+
+```{r global_options, echo = F}
+knitr::opts_chunk$set(fig.align = 'center', cache = T)
+library(dplyr, warn.conflicts = F)
+library(knitr, warn.conflicts = F)
+```
 
 # Start with R
 ## Introduction
@@ -479,17 +487,26 @@ print(M, 'chart')
 
 2. rCharts
 
-```{r rcharts, results='asis'}
+```{r rcharts, results='asis', comment = NA, tidy = F, cache = F}
 library(rCharts)
 
 tmp <- dt_pyramid %>% filter(Geo == "CZ") %>% 
   group_by(Gen_eco, Year) %>% summarize(Population = sum(F+M)) %>%
   mutate(Generation = Gen_eco, Date = as.numeric(as.POSIXct(paste0(Year, "-01-01"))))
 
-r <- Rickshaw$new()
-r$layer(Population ~ Date, group = "Generation", data = tmp, type = "area", width = 600)
-r$set(slider = TRUE)
-r$show('iframesrc', cdn = TRUE)
+# r <- Rickshaw$new()
+# r$layer(Population ~ Date, group = "Generation", data = tmp, type = "area", width = 600)
+# r$set(slider = TRUE)
+
+r <- nPlot(Population ~ Date, group = "Generation", data = tmp, type = 'multiBarChart')
+#r$print('nPlot')
+r$show('nPlot1', cdn =TRUE)
+
+#r$save('index_files/rChart1.html', cdn = TRUE)
+#cat('<iframe src="index_files/rChart1.html" width=100%, height = 100%></iframe>')
+#r$show('inline', cdn = TRUE, include_assets = TRUE)
+
+#r$print('iframesrc', include_assets=TRUE)
 
 ```
 
