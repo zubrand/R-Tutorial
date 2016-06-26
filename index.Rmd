@@ -186,6 +186,7 @@ As usual, first step of data processing in R is importing the data. Data can be 
 ```{r import}
 dt_total <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_total.csv")
 dt_pyramid <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_pyramid.csv", header = T, sep = ",", quote = '"', stringsAsFactors = T)
+dt_mortality <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_mortality.csv")
 
 class(dt_total)
 str(dt_total)
@@ -487,7 +488,7 @@ print(M, 'chart')
 
 2. rCharts
 
-```{r rcharts, results='asis', comment = NA, cache = F}
+```{r rcharts, results='asis', comment = NA}
 library(rCharts)
 options(
   rcharts.mode = 'iframesrc', 
@@ -555,8 +556,84 @@ ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) +
 As you can see, special package `pyramid` makes it easy and comfortable to build 1 pyramid. On the other hand, `ggplot2` solution is more complex, but at the same time more powerful, providing possibility to easily compare numerous years and/or countries.
 
 ## Indeces
+
+In demography, quite often you have to calculate some indices and ratios. These ratios can use different bases and different groupings, so R is very useful at developing those algorithms once and then reusing it each time its needed. Following example will calculate selected indices for a few countries for a few years:
+
+```{r indeces, cache=F}
+# Index of masculinity
+Ratios <- dt_pyramid %>% 
+       filter(Geo %in% c("CZ","ES","NO","SE","DE_TOT") & between(Year, 2000, 2010)) %>%
+       group_by(Year, Geo) %>% summarize(Masculinity = sum(M)/sum(F))
+     
+# Sauvy's index
+     Ratios <- dt_pyramid %>% mutate(Tot = M + F) %>% group_by(Year, Geo, Gen_bio) %>% 
+       summarize(Tot = sum(Tot)) %>% 
+       dcast(Year + Geo ~ Gen_bio, value.var = "Tot", fun.aggregate = sum, na.rm = T) %>%
+       setNames(c("Year", "Geo", "I", "II", "III")) %>% mutate(Sauvy = III/I) %>%
+       select(Year, Geo, Sauvy) %>% merge(Ratios)
+
+# Indeces for economical generations
+     Ratios <- dt_pyramid %>% mutate(Tot = M + F) %>% group_by(Year, Geo, Gen_eco) %>% 
+       summarize(Tot = sum(Tot)) %>% 
+       dcast(Year + Geo ~ Gen_eco, value.var = "Tot", fun.aggregate = sum, na.rm = T) %>%
+       setNames(c("Year", "Geo", "I", "II", "III")) %>% 
+       mutate(TDR = (I+III)/II, OADR = III/II, JADR = I/II, Seniority = III/I) %>% 
+       select(-I,-II,-III) %>% merge(Ratios)
+
+Ratios %>% head(10)
+```
+
+As you can see, R code had no problem of calculating these indicators for numerous countries and years, which is very convenient for the researcher.
+
 ## Life tables
+
+Life table is a significant part of demographic analysis and, also, crucial part in life insurance. Calculation of all columns is quite complex, but we will show how easy and quick is to do it in R due to vector functions.
+
+Input will be year-specific mortality rates:
+
+```{r life_table, cache=F}
+# Age-specific mortality rates
+head(dt_mortality)
+# Calculation of life table for Males in Norway:
+dt_mortality %>% filter(Country == "NO" & Sex == "M") %>% 
+  arrange(Age) %>% # Sort table for usage of cummulative functions
+  mutate(qx = `Mortality.Rate`, px = 1-qx, # simple indicators
+         lx = cumprod(px)*100000/px, # appropriate calculations after sorting
+         dx = lx * qx, Lx = lx-dx/2) %>% # simple derivative indicators
+  select(-`Mortality.Rate`) %>% arrange(-Age) %>% # reverse order for calculation of life expectancy
+  mutate(Tx = cumsum(Lx), # cumulative sum with descending order for quick calculation
+         ex = Tx/lx) %>%  # life expectancy as simple derivative indicator
+  arrange(Age) %>%
+  mutate(qx = round(qx,4), px = round(px,4), lx = comma(lx %>% round(0)), dx = round(dx,1), Lx = comma(Lx %>% round(0)), Tx = comma(Tx %>% round(0)), ex = round(ex,1)) %>% # formatting
+  head(10)
+```
+
+As we see, this solution is quite simple and quick - you can do it in one chain - no need to use numerous cycles, etc. But it has a limitation: it can only be performed for one group with unique age (only males/females of one country). To aviod this limitation, we will use one of the `apply` family functions:
+
+```{r life_table_apply, cache=F}
+# How to split table:
+split(dt_mortality, list(dt_mortality$Sex, dt_mortality$Country)) %>% str()
+
+# Putting previous algorithm in the function
+life_table <- function(data)
+    data %>% arrange(Age) %>% mutate(qx = `Mortality.Rate`, px = 1-qx, lx = cumprod(px)*100000/px, dx = lx * qx, Lx = lx-dx/2) %>% select(-`Mortality.Rate`) %>% arrange(-Age) %>% mutate(Tx = cumsum(Lx), ex = Tx/lx) %>% arrange(Age)
+
+# Apply function family
+lapply(split(dt_mortality, list(dt_mortality$Sex, dt_mortality$Country)), 
+      life_table) %>% 
+  rbind_all() %>% # unite lists in one table
+  arrange(Age) %>% # sort by age to show that it was calculated for both F and M
+  head(10) %>%
+  mutate(qx = round(qx,4), px = round(px,4), lx = comma(lx %>% round(0)), dx = round(dx,1), Lx = comma(Lx %>% round(0)), Tx = comma(Tx %>% round(0)), ex = round(ex,1)) # formatting
+```
+
+Usage of `split` and `lapply` functions helped us to be able to calculate life tables for numerous countries and both sexes at once. Also, there is a special package `plyr`, which is aimed at more comfortable usage of split and apply family with final union of results.
+
 ## Projections
+
+Projections, similarly to life tables, can be easily calculated for long time horizon and different scenarios can be reviewed. It is a Markov chain, so all we need is starting year and function (parameters) of movement to the next year. After that, process will be replicated numerous times.
+
+Let's see example, where we will calculate projections for Norway from 2016 to 2100. These projections.
 
 # Presentation of results
 
@@ -609,5 +686,12 @@ Another quite similar thing is called `yhat`, provided on [this website](http://
 Git is used not only to develop or solve something, but to share results, knowledge. Quite often there are specified tools to better visualize your research immediately on git provider's website. For example, GitHub provides an option of so called github-pages, where you can integrate you html presentation or report. 
 
 [Here](https://github.com/zubrand/R-Tutorial) is an example of specialized git repository for this tutorial. You can see the list of files and forlders, explore and download them, but the files aren't immediately visualized (e.g. html report is opened as a source code). To 'beautify' git, github-pages were applied and on [this link](https://zubrand.github.io/R-Tutorial/) you can explore the `index.html` file from the git repository mentioned above.
+
+I would personally recommend this [git client](https://git-scm.com/downloads). Regarding git providers: 
+
+* [GitHub](https://github.com/) is the most popular one, but free account allows to create only public repositories.
+
+* [GitLab](https://gitlab.com/) has beautified `pages` (as well as GitHub) and allows you to create private repositories, set tasks to the team and track it. I personally recommend this one.
+
 
 Now you know how to prepare and share your results in R.

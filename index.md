@@ -617,6 +617,7 @@ As usual, first step of data processing in R is importing the data. Data can be 
 ```r
 dt_total <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_total.csv")
 dt_pyramid <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_pyramid.csv", header = T, sep = ",", quote = '"', stringsAsFactors = T)
+dt_mortality <- read.csv("D:/OneDrive/VSE/II/R Tutorial/Data/dt_mortality.csv")
 
 class(dt_total)
 ```
@@ -2147,21 +2148,21 @@ r
   &lt;/head&gt;
   &lt;body &gt;
     
-    &lt;div id = &#039;chart22347d1d77f5&#039; class = &#039;rChart nvd3&#039;&gt;&lt;/div&gt;    
+    &lt;div id = &#039;chart1ab816ce40ba&#039; class = &#039;rChart nvd3&#039;&gt;&lt;/div&gt;    
     &lt;script type=&#039;text/javascript&#039;&gt;
  $(document).ready(function(){
-      drawchart22347d1d77f5()
+      drawchart1ab816ce40ba()
     });
-    function drawchart22347d1d77f5(){  
+    function drawchart1ab816ce40ba(){  
       var opts = {
- &quot;dom&quot;: &quot;chart22347d1d77f5&quot;,
+ &quot;dom&quot;: &quot;chart1ab816ce40ba&quot;,
 &quot;width&quot;:    600,
 &quot;height&quot;:    400,
 &quot;x&quot;: &quot;Year&quot;,
 &quot;y&quot;: &quot;Population&quot;,
 &quot;group&quot;: &quot;Generation&quot;,
 &quot;type&quot;: &quot;stackedAreaChart&quot;,
-&quot;id&quot;: &quot;chart22347d1d77f5&quot;,
+&quot;id&quot;: &quot;chart1ab816ce40ba&quot;,
 &quot;title&quot;: &quot;Development of economical generation in Czech Republic&quot; 
 },
         data = [
@@ -2764,7 +2765,7 @@ r
     
     &lt;style&gt; svg text {font-size: 9px;}&lt;/style&gt;    
   &lt;/body&gt;
-&lt;/html&gt; ' scrolling='no' frameBorder='0' seamless class='rChart  nvd3  ' id='iframe-chart22347d1d77f5'> </iframe>
+&lt;/html&gt; ' scrolling='no' frameBorder='0' seamless class='rChart  nvd3  ' id='iframe-chart1ab816ce40ba'> </iframe>
  <style>iframe.rChart{ width: 100%; height: 400px;}</style>
 
 # Demography in R
@@ -2827,8 +2828,172 @@ ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) +
 As you can see, special package `pyramid` makes it easy and comfortable to build 1 pyramid. On the other hand, `ggplot2` solution is more complex, but at the same time more powerful, providing possibility to easily compare numerous years and/or countries.
 
 ## Indeces
+
+In demography, quite often you have to calculate some indices and ratios. These ratios can use different bases and different groupings, so R is very useful at developing those algorithms once and then reusing it each time its needed. Following example will calculate selected indices for a few countries for a few years:
+
+
+```r
+# Index of masculinity
+Ratios <- dt_pyramid %>% 
+       filter(Geo %in% c("CZ","ES","NO","SE","DE_TOT") & between(Year, 2000, 2010)) %>%
+       group_by(Year, Geo) %>% summarize(Masculinity = sum(M)/sum(F))
+     
+# Sauvy's index
+     Ratios <- dt_pyramid %>% mutate(Tot = M + F) %>% group_by(Year, Geo, Gen_bio) %>% 
+       summarize(Tot = sum(Tot)) %>% 
+       dcast(Year + Geo ~ Gen_bio, value.var = "Tot", fun.aggregate = sum, na.rm = T) %>%
+       setNames(c("Year", "Geo", "I", "II", "III")) %>% mutate(Sauvy = III/I) %>%
+       select(Year, Geo, Sauvy) %>% merge(Ratios)
+
+# Indeces for economical generations
+     Ratios <- dt_pyramid %>% mutate(Tot = M + F) %>% group_by(Year, Geo, Gen_eco) %>% 
+       summarize(Tot = sum(Tot)) %>% 
+       dcast(Year + Geo ~ Gen_eco, value.var = "Tot", fun.aggregate = sum, na.rm = T) %>%
+       setNames(c("Year", "Geo", "I", "II", "III")) %>% 
+       mutate(TDR = (I+III)/II, OADR = III/II, JADR = I/II, Seniority = III/I) %>% 
+       select(-I,-II,-III) %>% merge(Ratios)
+
+Ratios %>% head(10)
+```
+
+```
+##    Year    Geo       TDR      OADR      JADR Seniority    Sauvy
+## 1  2000     CZ 0.5926929 0.2197452 0.3729477 0.5892119 1.922285
+## 2  2000 DE_TOT 0.6021861 0.2603491 0.3418370 0.7616179 2.242479
+## 3  2000     ES 0.6208032 0.2713746 0.3494286 0.7766238 2.197109
+## 4  2000     NO 0.6993885 0.2591800 0.4402085 0.5887664 1.571069
+## 5  2000     SE 0.7092224 0.2956045 0.4136179 0.7146801 1.935546
+## 6  2001     CZ 0.5805136 0.2178981 0.3626155 0.6009066 2.002396
+## 7  2001 DE_TOT 0.6073898 0.2675874 0.3398023 0.7874796 2.290493
+## 8  2001     ES 0.6103167 0.2720478 0.3382689 0.8042353 2.240345
+## 9  2001     NO 0.6954310 0.2555610 0.4398700 0.5809922 1.577441
+## 10 2001     SE 0.7041239 0.2936938 0.4104301 0.7155757 1.966223
+##    Masculinity
+## 1    0.9477028
+## 2    0.9528929
+## 3    0.9590972
+## 4    0.9804467
+## 5    0.9774195
+## 6    0.9490812
+## 7    0.9537689
+## 8    0.9605346
+## 9    0.9820284
+## 10   0.9783329
+```
+
+As you can see, R code had no problem of calculating these indicators for numerous countries and years, which is very convenient for the researcher.
+
 ## Life tables
+
+Life table is a significant part of demographic analysis and, also, crucial part in life insurance. Calculation of all columns is quite complex, but we will show how easy and quick is to do it in R due to vector functions.
+
+Input will be year-specific mortality rates:
+
+
+```r
+# Age-specific mortality rates
+head(dt_mortality)
+```
+
+```
+##   Sex Age Mortality.Rate Country
+## 1   F   0   2.190788e-03      NO
+## 2   F   1   2.522822e-04      NO
+## 3   F   2   7.255003e-05      NO
+## 4   F   3   9.849403e-05      NO
+## 5   F   4   9.264958e-05      NO
+## 6   F   5   8.023858e-05      NO
+```
+
+```r
+# Calculation of life table for Males in Norway:
+dt_mortality %>% filter(Country == "NO" & Sex == "M") %>% 
+  arrange(Age) %>% # Sort table for usage of cummulative functions
+  mutate(qx = `Mortality.Rate`, px = 1-qx, # simple indicators
+         lx = cumprod(px)*100000/px, # appropriate calculations after sorting
+         dx = lx * qx, Lx = lx-dx/2) %>% # simple derivative indicators
+  select(-`Mortality.Rate`) %>% arrange(-Age) %>% # reverse order for calculation of life expectancy
+  mutate(Tx = cumsum(Lx), # cumulative sum with descending order for quick calculation
+         ex = Tx/lx) %>%  # life expectancy as simple derivative indicator
+  arrange(Age) %>%
+  mutate(qx = round(qx,4), px = round(px,4), lx = comma(lx %>% round(0)), dx = round(dx,1), Lx = comma(Lx %>% round(0)), Tx = comma(Tx %>% round(0)), ex = round(ex,1)) %>% # formatting
+  head(10)
+```
+
+```
+##    Sex Age Country     qx     px      lx    dx     Lx        Tx   ex
+## 1    M   0      NO 0.0027 0.9973 100,000 268.3 99,866 7,883,953 78.8
+## 2    M   1      NO 0.0002 0.9998  99,732  21.9 99,721 7,784,088 78.1
+## 3    M   2      NO 0.0001 0.9999  99,710  10.6 99,704 7,684,367 77.1
+## 4    M   3      NO 0.0001 0.9999  99,699  10.6 99,694 7,584,662 76.1
+## 5    M   4      NO 0.0001 0.9999  99,689   6.9 99,685 7,484,969 75.1
+## 6    M   5      NO 0.0001 0.9999  99,682  14.6 99,674 7,385,283 74.1
+## 7    M   6      NO 0.0001 0.9999  99,667   6.4 99,664 7,285,609 73.1
+## 8    M   7      NO 0.0001 0.9999  99,661   5.8 99,658 7,185,945 72.1
+## 9    M   8      NO 0.0001 0.9999  99,655  11.1 99,649 7,086,287 71.1
+## 10   M   9      NO 0.0001 0.9999  99,644   5.2 99,641 6,986,638 70.1
+```
+
+As we see, this solution is quite simple and quick - you can do it in one chain - no need to use numerous cycles, etc. But it has a limitation: it can only be performed for one group with unique age (only males/females of one country). To aviod this limitation, we will use one of the `apply` family functions:
+
+
+```r
+# How to split table:
+split(dt_mortality, list(dt_mortality$Sex, dt_mortality$Country)) %>% str()
+```
+
+```
+## List of 2
+##  $ F.NO:'data.frame':	101 obs. of  4 variables:
+##   ..$ Sex           : Factor w/ 2 levels "F","M": 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ Age           : int [1:101] 0 1 2 3 4 5 6 7 8 9 ...
+##   ..$ Mortality.Rate: num [1:101] 2.19e-03 2.52e-04 7.26e-05 9.85e-05 9.26e-05 ...
+##   ..$ Country       : Factor w/ 1 level "NO": 1 1 1 1 1 1 1 1 1 1 ...
+##  $ M.NO:'data.frame':	101 obs. of  4 variables:
+##   ..$ Sex           : Factor w/ 2 levels "F","M": 2 2 2 2 2 2 2 2 2 2 ...
+##   ..$ Age           : int [1:101] 0 1 2 3 4 5 6 7 8 9 ...
+##   ..$ Mortality.Rate: num [1:101] 2.68e-03 2.20e-04 1.06e-04 1.06e-04 6.92e-05 ...
+##   ..$ Country       : Factor w/ 1 level "NO": 1 1 1 1 1 1 1 1 1 1 ...
+```
+
+```r
+# Putting previous algorithm in the function
+life_table <- function(data)
+    data %>% arrange(Age) %>% mutate(qx = `Mortality.Rate`, px = 1-qx, lx = cumprod(px)*100000/px, dx = lx * qx, Lx = lx-dx/2) %>% select(-`Mortality.Rate`) %>% arrange(-Age) %>% mutate(Tx = cumsum(Lx), ex = Tx/lx) %>% arrange(Age)
+
+# Apply function family
+lapply(split(dt_mortality, list(dt_mortality$Sex, dt_mortality$Country)), 
+      life_table) %>% 
+  rbind_all() %>% # unite lists in one table
+  arrange(Age) %>% # sort by age to show that it was calculated for both F and M
+  head(10) %>%
+  mutate(qx = round(qx,4), px = round(px,4), lx = comma(lx %>% round(0)), dx = round(dx,1), Lx = comma(Lx %>% round(0)), Tx = comma(Tx %>% round(0)), ex = round(ex,1)) # formatting
+```
+
+```
+## Source: local data frame [10 x 10]
+## 
+##       Sex   Age Country     qx     px      lx    dx     Lx        Tx    ex
+##    (fctr) (int)  (fctr)  (dbl)  (dbl)   (chr) (dbl)  (chr)     (chr) (dbl)
+## 1       F     0      NO 0.0022 0.9978 100,000 219.1 99,890 8,302,518  83.0
+## 2       M     0      NO 0.0027 0.9973 100,000 268.3 99,866 7,883,953  78.8
+## 3       F     1      NO 0.0003 0.9997  99,781  25.2 99,768 8,202,628  82.2
+## 4       M     1      NO 0.0002 0.9998  99,732  21.9 99,721 7,784,088  78.1
+## 5       F     2      NO 0.0001 0.9999  99,756   7.2 99,752 8,102,859  81.2
+## 6       M     2      NO 0.0001 0.9999  99,710  10.6 99,704 7,684,367  77.1
+## 7       F     3      NO 0.0001 0.9999  99,749   9.8 99,744 8,003,107  80.2
+## 8       M     3      NO 0.0001 0.9999  99,699  10.6 99,694 7,584,662  76.1
+## 9       F     4      NO 0.0001 0.9999  99,739   9.2 99,734 7,903,364  79.2
+## 10      M     4      NO 0.0001 0.9999  99,689   6.9 99,685 7,484,969  75.1
+```
+
+Usage of `split` and `lapply` functions helped us to be able to calculate life tables for numerous countries and both sexes at once. Also, there is a special package `plyr`, which is aimed at more comfortable usage of split and apply family with final union of results.
+
 ## Projections
+
+Projections, similarly to life tables, can be easily calculated for long time horizon and different scenarios can be reviewed. It is a Markov chain, so all we need is starting year and function (parameters) of movement to the next year. After that, process will be replicated numerous times.
+
+Let's see example, where we will calculate projections for Norway from 2016 to 2100. These projections.
 
 # Presentation of results
 
@@ -2879,5 +3044,12 @@ Another quite similar thing is called `yhat`, provided on [this website](http://
 Git is used not only to develop or solve something, but to share results, knowledge. Quite often there are specified tools to better visualize your research immediately on git provider's website. For example, GitHub provides an option of so called github-pages, where you can integrate you html presentation or report. 
 
 [Here](https://github.com/zubrand/R-Tutorial) is an example of specialized git repository for this tutorial. You can see the list of files and forlders, explore and download them, but the files aren't immediately visualized (e.g. html report is opened as a source code). To 'beautify' git, github-pages were applied and on [this link](https://zubrand.github.io/R-Tutorial/) you can explore the `index.html` file from the git repository mentioned above.
+
+I would personally recommend this [git client](https://git-scm.com/downloads). Regarding git providers: 
+
+* [GitHub](https://github.com/) is the most popular one, but free account allows to create only public repositories.
+
+* [GitLab](https://gitlab.com/) has beautified `pages` (as well as GitHub) and allows you to create private repositories, set tasks to the team and track it. I personally recommend this one.
+
 
 Now you know how to prepare and share your results in R.
