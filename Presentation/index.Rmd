@@ -9,7 +9,6 @@ hitheme     : tomorrow      #
 widgets     : [mathjax, quiz, bootstrap, interactive]         # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
-ext_idgets     : {rCharts: ["libraries/highcharts", "libraries/nvd3", "libraries/morris"]} 
 output: 
   html_document: 
     fig_width: 12
@@ -99,33 +98,10 @@ ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) +
   facet_grid(Geo ~ Year) + theme_bw()
 ```
 
----
-
-## Interact with your results
-
-```{r rcharts, results='asis', comment = NA, echo = F, tidy=F, message=T}
-library(rCharts)
-options(
-  rcharts.mode = 'iframesrc', 
-  rcharts.cdn = TRUE,
-  RCHART_WIDTH = 1000,
-  RCHART_HEIGHT = 500
-)
-
-tmp <- dt_pyramid %>% filter(Geo == "CZ") %>% 
-  group_by(Gen_eco, Year) %>% summarize(Population = sum(F+M)) %>%
-  mutate(Generation = Gen_eco, Date = as.numeric(as.POSIXct(paste0(Year, "-01-01"))))
-r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year >= 1990), type = 'stackedAreaChart', id = 'nPlot1')
-r$set(title = "Development of economical generation in Czech Republic")
-r$setTemplate(afterScript='<style> svg text {font-size: 9px;}</style>')
-r$yAxis(staggerLabels = FALSE)
-
-r$print('chartr', include_assets=TRUE, cdn=TRUE)
-```
 
 --- &interactive
 
-## Play with your results
+## Interact with your results
 
 ```{r gvis2, results='asis', comment=NA, message=F, echo=F, opts.label = 'interactive'}
 M <- gvisMotionChart(Ratios, idvar = "Geo", timevar = "Year", options = list(width = 100, height = 500), chartid = "chartid")
