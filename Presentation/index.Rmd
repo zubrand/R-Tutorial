@@ -6,8 +6,8 @@ date: "10 července 2016"
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
-widgets     : [mathjax, quiz, bootstrap, interactive]         # {mathjax, quiz, bootstrap}
-mode        : selfcontained # {standalone, draft}
+widgets     : [mathjax, quiz, bootstrap]         # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft, selfcontained}
 knit        : slidify::knit2slides
 output: 
   html_document: 
@@ -99,12 +99,12 @@ ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) +
 ```
 
 
---- &interactive
+---
 
 ## Interact with your results
 
-```{r gvis2, results='asis', comment=NA, message=F, echo=F, opts.label = 'interactive'}
-M <- gvisMotionChart(Ratios, idvar = "Geo", timevar = "Year", options = list(width = 100, height = 500), chartid = "chartid")
+```{r gvis2, results='asis', comment=NA, echo=F}
+M <- gvisMotionChart(Ratios, idvar = "Geo", timevar = "Year", options = list(width = 1000, height = 500), chartid = "chartid")
 print(M, 'chart')
 ```
 

@@ -15,7 +15,6 @@
   <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
   <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/quiz/css/demo.css"></link>
 <link rel=stylesheet href="libraries/widgets/bootstrap/css/bootstrap.css"></link>
-<link rel=stylesheet href="libraries/widgets/interactive/css/aceeditor.css"></link>
 
   
   <!-- Grab CDN jQuery, fall back to local if offline -->
@@ -146,13 +145,9 @@ Ratios &lt;- dt_pyramid %&gt;%
     <h2>Interact with your results</h2>
   </hgroup>
   <article data-timings="">
-     
-<div class='row-fluid'>
-  <div class='span5'>
-    <form id="knitForm6" data-cell="6">
-      <!-- MotionChart generated in R 3.3.0 by googleVis 0.5.10 package -->
+    <!-- MotionChart generated in R 3.3.0 by googleVis 0.5.10 package -->
 
-<!-- Sun Jul 10 14:18:53 2016 -->
+<!-- Sun Jul 10 14:24:24 2016 -->
 
 <!-- jsHeader -->
 
@@ -730,7 +725,7 @@ return(data);
 function drawChartchartid() {
 var data = gvisDatachartid();
 var options = {};
-options["width"] =    100;
+options["width"] =   1000;
 options["height"] =    500;
 options["state"] = "";
 
@@ -793,36 +788,9 @@ callbacks.shift()();
 <!-- divChart -->
 
 <div id="chartid" 
-  style="width: 100; height: 500;">
+  style="width: 1000; height: 500;">
 </div>
 
-      <div id='aceeditor6' style="height:px;"></div>
-      <div class='interactive btn-toolbar pull-left'>
-        <div class='btn-group'>
-          <a class='btn btn-small action-button' id='runCode6' data-action='runCode'
-            data-cell='6' rel='tooltip' data-title='Run Code'>
-            <i class='icon-play'></i>
-          </a>
-          <a class='btn btn-small iBtn' id='testCode6' data-action='testCode'
-             data-cell='6' rel='tooltip' data-title='Test Code'>
-            <i class='icon-check'></i>
-          </a>
-          <a class='btn btn-small iBtn' id='clearResult6' data-action='clearResult'
-             data-cell='6' rel='tooltip' data-title='Clear Output'>
-            <i class="icon-remove"></i>
-          </a>
-          <a class='btn  btn-small iBtn' id='getHint6' rel='tooltip' 
-            data-title="Get Hint" data-action='getHint'
-            data-cell='6' data-hint="">
-            <i class="icon-bookmark"></i>
-          </a>
-        </div>
-      </div>    </form>
-  </div>
-  <div class='span7'>
-    <iframe id="knitResult6" class='shiny-html-output'></iframe>
-  </div>
-</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -921,9 +889,6 @@ callbacks.shift()();
 <script src="libraries/widgets/quiz/js/quiz-app.js"></script>
 <script src="libraries/widgets/bootstrap/js/bootstrap.min.js"></script>
 <script src="libraries/widgets/bootstrap/js/bootbox.min.js"></script>
-<script src="libraries/widgets/interactive/js/ace/js/ace.js"></script>
-<script src="libraries/widgets/interactive/js/opencpu-0.5.js"></script>
-<script src="libraries/widgets/interactive/js/interactive.js"></script>
 
   <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
   <script type="text/x-mathjax-config">

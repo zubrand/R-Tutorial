@@ -6,8 +6,8 @@ date: "10 července 2016"
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
-widgets     : [mathjax, quiz, bootstrap, interactive]         # {mathjax, quiz, bootstrap}
-mode        : selfcontained # {standalone, draft}
+widgets     : [mathjax, quiz, bootstrap]         # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft, selfcontained}
 knit        : slidify::knit2slides
 output: 
   html_document: 
@@ -93,12 +93,12 @@ Ratios <- dt_pyramid %>%
 ![plot of chunk ggplot2](assets/fig/ggplot2-1.png)
 
 
---- &interactive
+---
 
 ## Interact with your results
 
 <!-- MotionChart generated in R 3.3.0 by googleVis 0.5.10 package -->
-<!-- Sun Jul 10 14:18:53 2016 -->
+<!-- Sun Jul 10 14:24:24 2016 -->
 
 
 <!-- jsHeader -->
@@ -676,7 +676,7 @@ return(data);
 function drawChartchartid() {
 var data = gvisDatachartid();
 var options = {};
-options["width"] =    100;
+options["width"] =   1000;
 options["height"] =    500;
 options["state"] = "";
 
@@ -736,7 +736,7 @@ callbacks.shift()();
 <!-- divChart -->
   
 <div id="chartid" 
-  style="width: 100; height: 500;">
+  style="width: 1000; height: 500;">
 </div>
 
 --- &radio
