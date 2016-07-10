@@ -500,16 +500,11 @@ options(
 tmp <- dt_pyramid %>% filter(Geo == "CZ") %>% 
   group_by(Gen_eco, Year) %>% summarize(Population = sum(F+M)) %>%
   mutate(Generation = Gen_eco, Date = as.numeric(as.POSIXct(paste0(Year, "-01-01"))))
-
-# r <- Rickshaw$new()
-# r$layer(Population ~ Date, group = "Generation", data = tmp, type = "multiBarChart", width = 600)
-# r$set(slider = TRUE)
-
-
 r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year >= 1990), type = 'stackedAreaChart', id = 'nPlot1')
 r$set(title = "Development of economical generation in Czech Republic")
 r$setTemplate(afterScript='<style> svg text {font-size: 9px;}</style>')
 r$yAxis(staggerLabels = FALSE)
+
 r
 
 ```
@@ -634,6 +629,155 @@ Usage of `split` and `lapply` functions helped us to be able to calculate life t
 Projections, similarly to life tables, can be easily calculated for long time horizon and different scenarios can be reviewed. It is a Markov chain, so all we need is starting year and function (parameters) of movement to the next year. After that, process will be replicated numerous times.
 
 Let's see example, where we will calculate projections for Norway from 2016 to 2100. These projections.
+
+First of all, input parameters should be calculated:
+
+ - Age-specific mortality rates by sex
+ - Net migration rates by sex and age
+ - Age-specific fertility rates
+ - Sex proportion of newborns
+
+```{r projections_input, cache=F}
+# Mortality rates: same as for life tables above
+dt_mortality %>% head()
+
+# Net Migration
+dt_migration <- read.csv('Data/Norway_Migration.csv', header = T, sep = ';', dec = ',')
+dt_migration %>% head()
+
+dt_net_migration <- dt_pyramid %>% filter(Geo == "NO" & Year %in% c(2013,2014)) %>%
+  group_by(Age) %>% summarize(F = sum(F), M = sum(M)) %>% 
+  melt(id = "Age") %>% setNames(c("Age", "Sex", "Pop")) %>% 
+  merge(dt_migration %>% group_by(Age, Sex) %>% summarize(Migr = sum(Net_Migration))) %>%
+  mutate(Net_Migration = Migr/Pop) %>% select(Age, Sex, Net_Migration) %>% arrange(Age, Sex)
+dt_net_migration %>% head(10)
+
+# Age-specific fetrility
+dt_fertility_age <- read.csv('Data/Norway_Fertility_rate.csv', header = T, sep = ';', dec = ',')
+dt_fertility_age %>% head()
+
+# Proportion of males for newborns
+dt_newborn_sex <- read.csv('Data/Norway_Fertility_Age_Sex.csv', header = T, sep = ";", dec = ',')
+dt_newborn_sex %>% head()
+
+males_share <- dt_newborn_sex %>% group_by(Sex) %>% summarize(Count = sum(Count)) %>%
+  dcast(. ~ Sex) %>% mutate(Share = M/(M+F)) %>% `[`(1,4)
+males_share
+
+## Projection inputs
+proj_parameter <- list(pop_change = dt_mortality %>% merge(dt_net_migration) %>%
+                         mutate(Net.Change = Net_Migration - Mortality.Rate) %>%
+                         select(Age, Sex, Net.Change),
+                       fertility = dt_fertility_age %>% group_by(Age) %>% 
+                         summarize(Fertility_Rate = mean(Fertility_Rate, na.rm = T)) %>%
+                         mutate(Sex = factor("F", levels = c("F", "M"))),
+                       males_share = males_share)
+
+proj_parameter %>% str()
+
+proj_result <- dt_pyramid %>% filter(Year == 2015 & Geo == "NO") %>%
+  select(Age, Year, F, M) %>% melt(id = c("Age", "Year")) %>%
+  setNames(c("Age","Year", "Sex", "Population"))
+proj_result %>% head()
+```
+
+Now, the algorithm will add to the table `proj_result` population projections for each year one-by-one up to 2100:
+
+```{r projections, cache=F}
+for (i in (2016:2100))
+  proj_result <- proj_result %>% filter(Year == i-1) %>%
+    merge(proj_parameter$pop_change, by = c("Age", "Sex")) %>%
+    mutate(Population = Population * (1 + Net.Change), Year = i, Age = pmin(100, Age+1)) %>%
+    group_by(Age, Year, Sex) %>% summarize(Population = sum(Population) %>% round(0)) %>%
+    rbind(data.frame(c(0,0), rep(i, 2), factor(c("M","F")), ((proj_result %>% filter(Year == i-1) %>%
+    merge(proj_parameter$fertility, by = c("Age", "Sex")) %>%
+    mutate(Population = Population * Fertility_Rate) %>%
+    `[`(,"Population") %>% sum())*c(proj_parameter$males_share,1-proj_parameter$males_share)) %>% round(0)) %>%
+      setNames(c("Age", "Year", "Sex", "Population"))) %>%
+    rbind(proj_result)
+
+first_scenario <- list(proj_parameter = proj_parameter, proj_result = proj_result)
+```
+
+As you can see, in the end we're saving results in the variable first scenario. Actually, we can run numerous scenarios, which would have the same calculation algorithm, but just different input `proj_parameter`.
+
+Let's take a look at the results of our projections:
+
+```{r projection_result, cache = F}
+first_scenario$proj_result %>% group_by(Year) %>% summarize(Population = sum(Population)) %>%
+  ggplot(aes(x = Year, y = Population)) + geom_line() +
+  scale_y_continuous(limits = c(0, 1.2*10^7), labels = comma) +
+  ggtitle("Projection of Norway's population till 2100\nFirst scenario")
+
+first_scenario$proj_result %>% group_by(Year, Sex) %>% summarize(Population = sum(Population)) %>%
+  ggplot(aes(x = Year, y = Population, color = Sex)) + geom_line() +
+  scale_y_continuous(limits = c(0, .6*10^7), labels = comma) +
+  ggtitle("Projection of Norway's population by sex till 2100\nFirst scenario")
+
+first_scenario$proj_result %>% 
+  filter(Year == 2100) %>% group_by(Age, Sex) %>% summarise(value = sum(Population, na.rm = T)) %>%
+  dcast(Age ~ Sex, fun.aggregate = sum, value.var = "value") %>% select(M, F, Age) %>%
+  pyramid(Csize = 1, Cstep = 5, AxisFM = 'd', Cgap = .1,
+          main = "Pyramid of Norway's population in 2100\nFirst scenario")
+
+# Ggplot2 comparison pyramids
+tmp_pyr <- first_scenario$proj_result %>% filter(Year %in% c(2015, 2045, 2070, 2100))
+ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) + 
+  geom_bar(data = subset(tmp_pyr, Sex == "F"), stat = "identity") + 
+  geom_bar(data = subset(tmp_pyr, Sex == "M"), aes(y=-Population), stat = "identity") + 
+  scale_y_continuous(labels = function(x) comma(abs(x))) + 
+  coord_flip() + ggtitle("Pyramid graphs of selected projection years\nFirst scenario") +
+  scale_fill_brewer(palette = "Set1") +
+  facet_wrap( ~ Year) + theme_bw()
+```
+
+You can easilty see the trend of your population sctructure and size from the graphs. To show another scenario, we will make the calculation that the net migration rate in the long-term perspective will be half of what it was on 2013-2014:
+
+```{r proj_scenario, cache=F}
+# Preparation
+proj_parameter <- list(pop_change = dt_mortality %>% merge(dt_net_migration) %>%
+                         mutate(Net.Change = Net_Migration/2 - Mortality.Rate) %>%
+                         select(Age, Sex, Net.Change),
+                       fertility = dt_fertility_age %>% group_by(Age) %>% 
+                         summarize(Fertility_Rate = mean(Fertility_Rate, na.rm = T)) %>%
+                         mutate(Sex = factor("F", levels = c("F", "M"))),
+                       males_share = males_share)
+proj_result <- dt_pyramid %>% filter(Year == 2015 & Geo == "NO") %>%
+  select(Age, Year, F, M) %>% melt(id = c("Age", "Year")) %>%
+  setNames(c("Age","Year", "Sex", "Population"))
+
+# Calculation
+for (i in (2016:2100))
+  proj_result <- proj_result %>% filter(Year == i-1) %>%
+    merge(proj_parameter$pop_change, by = c("Age", "Sex")) %>%
+    mutate(Population = Population * (1 + Net.Change), Year = i, Age = pmin(100, Age+1)) %>%
+    group_by(Age, Year, Sex) %>% summarize(Population = sum(Population) %>% round(0)) %>%
+    rbind(data.frame(c(0,0), rep(i, 2), factor(c("M","F")), ((proj_result %>% filter(Year == i-1) %>%
+    merge(proj_parameter$fertility, by = c("Age", "Sex")) %>%
+    mutate(Population = Population * Fertility_Rate) %>%
+    `[`(,"Population") %>% sum())*c(proj_parameter$males_share,1-proj_parameter$males_share)) %>% round(0)) %>%
+      setNames(c("Age", "Year", "Sex", "Population"))) %>%
+    rbind(proj_result)
+
+second_scenario <- list(proj_parameter = proj_parameter, proj_result = proj_result)
+
+# Graphs
+second_scenario$proj_result %>% group_by(Year) %>% summarize(Population = sum(Population)) %>%
+  ggplot(aes(x = Year, y = Population)) + geom_line() +
+  scale_y_continuous(limits = c(0, 1.2*10^7), labels = comma) +
+  ggtitle("Projection of Norway's population till 2100\nSecond scenario")
+
+tmp_pyr <- second_scenario$proj_result %>% filter(Year %in% c(2015, 2045, 2070, 2100))
+ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) + 
+  geom_bar(data = subset(tmp_pyr, Sex == "F"), stat = "identity") + 
+  geom_bar(data = subset(tmp_pyr, Sex == "M"), aes(y=-Population), stat = "identity") + 
+  scale_y_continuous(labels = function(x) comma(abs(x))) + 
+  coord_flip() + ggtitle("Pyramid graphs of selected projection years\nSecond scenario") +
+  scale_fill_brewer(palette = "Set1") +
+  facet_wrap( ~ Year) + theme_bw()
+```
+
+Now you see how easy it is to make a projections in R and how to run different scenarios. In case of huge number of scenarios, you can use `apply` family of functions as we did for life tables calculation.
 
 # Presentation of results
 
