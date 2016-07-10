@@ -1,0 +1,152 @@
+---
+title: "Economic Demography"
+subtitle: "Introduction to R"
+author: "Andriy Zhubryd"
+date: "10 července 2016"
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax, quiz, bootstrap, interactive]         # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+ext_idgets     : {rCharts: ["libraries/highcharts", "libraries/nvd3", "libraries/morris"]} 
+output: 
+  html_document: 
+    fig_width: 12
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+R is not just big scary console window, where you need to enter you code. It can also be a nice [report](http://www.zubrand.github.io/R-Tutorial) or [presentation](http://www.zubrand.github.io/R-Tutorial/Presentation).
+
+This is a simple example how you can communicate your results from R in the form of presentation, which you can open in your web browser without a need to install R.
+
+One of the greatest advantage of such presentation is automation and reproducibility. If you change some input data or some part of your algorithm, R will automatically generate new presentation and manual actions of copy-pasting results in presentation are avoided. Also, if you need your results to be reproducible, R presentation is definitely for you.
+
+```{r preparation, echo=FALSE, message=F}
+library(dplyr, warn.conflicts = F)
+library(reshape2)
+library(scales)
+library(ggplot2)
+library(pyramid)
+library(xtable)
+library(rCharts)
+library(googleVis, warn.conflicts = F)
+dt_pyramid <- read.csv('Data/dt_pyramid.csv')
+```
+
+---
+
+## Show your calculations
+
+
+```{r indeces}
+# Index of masculinity
+Ratios <- dt_pyramid %>% 
+       filter(Geo %in% c("CZ","ES","NO","SE","DE_TOT") & between(Year, 2000, 2010)) %>%
+       group_by(Year, Geo) %>% summarize(Masculinity = sum(M)/sum(F))
+# Sauvy's index
+     Ratios <- dt_pyramid %>% mutate(Tot = M + F) %>% group_by(Year, Geo, Gen_bio) %>% 
+       summarize(Tot = sum(Tot)) %>% 
+       dcast(Year + Geo ~ Gen_bio, value.var = "Tot", fun.aggregate = sum, na.rm = T) %>%
+       setNames(c("Year", "Geo", "I", "II", "III")) %>% mutate(Sauvy = III/I) %>%
+       select(Year, Geo, Sauvy) %>% merge(Ratios)
+# Indeces for economical generations
+     Ratios <- dt_pyramid %>% mutate(Tot = M + F) %>% group_by(Year, Geo, Gen_eco) %>% 
+       summarize(Tot = sum(Tot)) %>% 
+       dcast(Year + Geo ~ Gen_eco, value.var = "Tot", fun.aggregate = sum, na.rm = T) %>%
+       setNames(c("Year", "Geo", "I", "II", "III")) %>% 
+       mutate(TDR = (I+III)/II, OADR = III/II, JADR = I/II, Seniority = III/I) %>% 
+       select(-I,-II,-III) %>% merge(Ratios)
+```
+
+---
+
+## Show your results
+
+```{r ratios, echo=F, results='asis'}
+Ratios %>% head(13) %>% xtable(digits = 3) %>% print(type = 'html')
+```
+
+---
+
+## Visualize your resuls
+
+```{r pyramid, echo = F, fig.width=12}
+dt_pyramid %>% filter(Geo == "CZ" & Year == 2000) %>% select(M, F, Age) %>%
+  pyramid(Csize = 1, Cstep = 5, AxisFM = 'd', Cgap = .1, Laxis = 0:4*25000,
+          main = "Pyramid of Czech population in 2000")
+```
+
+---
+
+## Compare your results
+
+```{r ggplot2, echo = F, fig.width=12, message=F}
+tmp_pyr <- dt_pyramid %>% filter(Geo %in% c("CZ","BE") & Year %in% c(2000, 2010)) %>%
+  select(-X, -Gen_bio, -Gen_eco) %>% melt(id = c("Age", "Geo", "Year")) %>%
+  mutate(Sex = variable, Population = value, Age = Age - Age %% 5) %>% group_by(Age, Geo, Year, Sex) %>% summarize(Population = sum(Population))
+ggplot(data = tmp_pyr, aes(x = Age, y = Population, fill = Sex)) + 
+  geom_bar(data = subset(tmp_pyr, Sex == "F"), stat = "identity") + 
+  geom_bar(data = subset(tmp_pyr, Sex == "M"), aes(y=-Population), stat = "identity") + 
+  scale_y_continuous(labels = function(x) comma(abs(x))) + 
+  coord_flip() + ggtitle("Pyramid graphs of selected years and countries\n5-year grouping") +
+  scale_fill_brewer(palette = "Set1") +
+  facet_grid(Geo ~ Year) + theme_bw()
+```
+
+---
+
+## Interact with your results
+
+```{r rcharts, results='asis', comment = NA, echo = F, tidy=F, message=T}
+library(rCharts)
+options(
+  rcharts.mode = 'iframesrc', 
+  rcharts.cdn = TRUE,
+  RCHART_WIDTH = 1000,
+  RCHART_HEIGHT = 500
+)
+
+tmp <- dt_pyramid %>% filter(Geo == "CZ") %>% 
+  group_by(Gen_eco, Year) %>% summarize(Population = sum(F+M)) %>%
+  mutate(Generation = Gen_eco, Date = as.numeric(as.POSIXct(paste0(Year, "-01-01"))))
+r <- nPlot(Population ~ Year, group = "Generation", data = tmp %>% filter(Year >= 1990), type = 'stackedAreaChart', id = 'nPlot1')
+r$set(title = "Development of economical generation in Czech Republic")
+r$setTemplate(afterScript='<style> svg text {font-size: 9px;}</style>')
+r$yAxis(staggerLabels = FALSE)
+
+r$print('chartr', include_assets=TRUE, cdn=TRUE)
+```
+
+--- &interactive
+
+## Play with your results
+
+```{r gvis2, results='asis', comment=NA, message=F, echo=F, opts.label = 'interactive'}
+M <- gvisMotionChart(Ratios, idvar = "Geo", timevar = "Year", options = list(width = 100, height = 500), chartid = "chartid")
+print(M, 'chart')
+```
+
+--- &radio
+
+## Interact with your readers 
+
+Will you use R in the future?
+
+1. _Yes_
+2. _Definitely_
+3. No
+4. Not sure
+
+*** .hint 
+I'm sure you know the right answer.
+
+*** .explanation
+It's obvious, isn't it?
+
+
