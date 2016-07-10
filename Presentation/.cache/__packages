@@ -1,0 +1,9 @@
+base
+dplyr
+reshape2
+scales
+ggplot2
+pyramid
+xtable
+rCharts
+googleVis
